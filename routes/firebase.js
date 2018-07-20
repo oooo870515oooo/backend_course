@@ -14,34 +14,69 @@ router.use('/',function (req, res, next) {
     next()
   })
 
+  var config = {
+      databaseURL: "https://project-44b8b.firebaseio.com" // enter your databaseURL（輸入由firebase中申請到的firebase的databaseURL）
+  };
+
+  firebase.initializeApp(config);
+
+router.get('/getdata', function (req, res, next) {
+    firebase.database().ref('users/').once('value',function (snapshot){
+      console.log(snapshot.val());
+      res.status(206).json({
+        result:snapshot.val()
+      })
+    });
+  })
+
+router.post('/postdata', function(req, res, next) {
+      firebase.database().ref('users/' + '123').set({
+          username: req.body.username,
+          email: req.body.email
+      });
+    res.json({
+        result:'已完成註冊'
+      })
+    });
+
+    router.put('/putdata', function(req, res, next) {
+          firebase.database().ref('users/' + '124').update({
+              username: req.body.username,
+              email: req.body.email
+          });
+        res.json({
+            result:'已更新'
+          })
+        });
+
+    router.delete('/deletedata', function(req, res, next) {
+            firebase.database().ref('users/' + '124').remove()
+          res.json({
+              result:'已刪除'
+            })
+          });
+
+
+
+
+
+
 router.get('/', function (req, res, next) {
-
-    var config = {
-        databaseURL: "" // enter your databaseURL（輸入由firebase中申請到的firebase的databaseURL）
-    };
-
-    firebase.initializeApp(config);
-
     // Get a reference to the database service
     var database = firebase.database();
-
-     // set -> 建立新的資料
-    firebase.database().ref('users/' + '123').set({
-        username: 'wwwww',
-        email: 'test@gmail.com'
-    });
-
     // update -> 更新指定資料
     firebase.database().ref('users/' + '223').update({
-        username: 'wwwww',
+        username: 'ooooo',
         email: 'tes2t@gmail.com'
     });
+
+
 
     // once -> 取得資料
     firebase.database().ref('users/').once('value', function (snapshot) {
         console.log(snapshot.val());
         res.json({
-          
+
         })
     });
 
@@ -49,5 +84,4 @@ router.get('/', function (req, res, next) {
     firebase.database().ref('users/' + '123').remove()
 
 });
-
 module.exports = router;
